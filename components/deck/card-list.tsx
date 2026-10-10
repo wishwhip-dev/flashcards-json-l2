@@ -13,8 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { database, type Card } from "@/lib/db";
-import { deleteCard } from "@/lib/data/cards";
-import { formatDue, formatInterval } from "@/lib/srs";
+import { deleteCard } from "@/lib/data/cards";import { formatDue, formatInterval } from "@/lib/srs";
 
 /** Every card in the deck, with its interval and due date, and a delete that asks first. */
 export function CardList({ cards, now }: { cards: Card[]; now: number }) {
