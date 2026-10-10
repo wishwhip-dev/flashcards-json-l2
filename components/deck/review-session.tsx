@@ -82,7 +82,7 @@ export function ReviewSession({ dueCards: queue, onExit }: { dueCards: Card[]; o
   }
 
   return (
-    <Card>
+    <UICard>
       <CardHeader>
         <CardTitle className="text-lg">Reviewing</CardTitle>
         <p className="text-sm text-muted-foreground">
@@ -120,7 +120,7 @@ export function ReviewSession({ dueCards: queue, onExit }: { dueCards: Card[]; o
           <p className="text-center text-sm text-muted-foreground">Reveal the card to grade it.</p>
         )}
       </CardContent>
-    </Card>
+    </UICard>
   );
 }
 
@@ -130,7 +130,7 @@ function SessionSummary({ counts, onExit }: { counts: Record<Grade, number>; onE
   const total = counts.again + counts.good + counts.easy;
   const dueCount = stillDue.data?.length ?? 0;
   return (
-    <Card>
+    <UICard>
       <CardHeader>
         <CardTitle className="text-lg">Session finished</CardTitle>
       </CardHeader>
@@ -151,6 +151,6 @@ function SessionSummary({ counts, onExit }: { counts: Record<Grade, number>; onE
         </p>
         <Button onClick={onExit}>Back to deck</Button>
       </CardContent>
-    </Card>
+    </UICard>
   );
 }
