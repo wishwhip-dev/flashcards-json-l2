@@ -17,7 +17,7 @@ export async function dueCards(now: number): Promise<Card[]> {
 }
 
 /** The earliest due date still in the future, or undefined when nothing is pending. */
-export async function nextDueAt_(now: number): Promise<number | undefined> {
+export async function nextPendingDue(now: number): Promise<number | undefined> {
   const next = await (await table()).where("dueAt").above(now).first();
   return next?.dueAt;
 }
