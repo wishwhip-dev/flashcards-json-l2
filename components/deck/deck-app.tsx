@@ -44,7 +44,7 @@ export function DeckApp() {
   const [session, setSession] = useState<Card[] | null>(null); // null = not reviewing
 
   const cards = deck.data ?? [];
-  const now = Date.now();
+  const now = useNow();
   const dueCount = cards.filter((card) => card.dueAt <= now).length;
 
   const startReview = async () => {
