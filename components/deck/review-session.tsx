@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useEffectEvent, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card as UICard, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { database, type Card } from "@/lib/db";
@@ -26,15 +26,15 @@ export function ReviewSession({ dueCards: queue, onExit }: { dueCards: Card[]; o
   const [flipped, setFlipped] = useState(false);
   const [counts, setCounts] = useState<Record<Grade, number>>({ again: 0, good: 0, easy: 0 });
   const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const inFlight = useRef(false);
 
   const full = [...queue, ...extra];
   const done = index >= full.length;
   const current = full[index];
 
-  const grade = useEffectEvent(async (g: Grade) => {
-    if (!current || busy) return;
-    setBusy(true);
+  const grade = async (g: Grade) => {
+    if (!current || inFlight.current) return;
+    inFlight.current = true;
     setError(null);
     try {
       const updated = await gradeCard(current, g, Date.now());
@@ -45,36 +45,41 @@ export function ReviewSession({ dueCards: queue, onExit }: { dueCards: Card[]; o
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save that grade — the card was not moved on.");
     } finally {
-      setBusy(false);
+      inFlight.current = false;
     }
-  });
+  };
 
-  const flip = useEffectEvent(() => {
+  const flip = () => {
     if (!current) return;
     setFlipped((f) => !f);
-  });
+  };
 
-  const onKey = useEffectEvent((event: KeyboardEvent) => {
-    if (done) return;
-    const target = event.target as HTMLElement | null;
-    if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA")) return;
-    if (event.code === "Space" || event.key === " ") {
-      event.preventDefault();
-      flip();
-    } else if (event.key === "1") {
-      void grade("again");
-    } else if (event.key === "2") {
-      void grade("good");
-    } else if (event.key === "3") {
-      void grade("easy");
-    }
-  });
-
-  // The listener is registered once; useEffectEvent keeps the handler it calls current.
+  // The window listener is registered once and reads the current handlers through a ref, so the
+  // keys always act on the card actually showing.
+  const handlers = useRef({ grade, flip, done });
   useEffect(() => {
-    const listener = (event: KeyboardEvent) => onKey(event);
-    window.addEventListener("keydown", listener);
-    return () => window.removeEventListener("keydown", listener);
+    handlers.current = { grade, flip, done };
+  });
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      const { grade, flip, done } = handlers.current;
+      if (done) return;
+      const target = event.target as HTMLElement | null;
+      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA")) return;
+      if (event.code === "Space" || event.key === " ") {
+        event.preventDefault();
+        flip();
+      } else if (event.key === "1") {
+        void grade("again");
+      } else if (event.key === "2") {
+        void grade("good");
+      } else if (event.key === "3") {
+        void grade("easy");
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   if (done) {
