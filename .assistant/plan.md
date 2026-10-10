@@ -1,0 +1,19 @@
+# Plan
+
+Goal: Spaced repetition flashcards. I can type cards, review them with 'again / good / easy' scheduling, and I can load a whole deck from a JSON file I choose from my computer; after loading, show how many cards came in and list them.
+
+1. The home page shows the deck at a glance: a readout of total cards and how many are due now, and visible, enabled buttons 'Add card', 'Review due cards' and 'Load JSON deck' directly on the page, with no sign-in or navigation needed to start any of them.
+2. With zero cards, the page shows an empty state telling the visitor to add their first card or load a deck; when cards exist but none are due, the review area says so and names the date the next card comes due, rather than rendering a blank area.
+3. Clicking 'Add card' opens a form with labelled Front and Back inputs and a 'Save card' submit button; submitting with non-empty text adds the card to the list on the page immediately and the form clears ready for the next card, while submitting with an empty Front or Back shows an inline error and adds nothing.
+4. The card list shows every card with its front, back, current interval and next due date, and each row has a 'Delete' button that removes that card after confirmation; added cards and their scheduling state are still there after reloading the page (saved to the Dexie database via lib/db.ts and read back through lib/data queries).
+5. Choosing 'Load JSON deck' opens the shipped FileDrop component; picking or dropping a .json file parses either a bare array of {front, back} objects or an object with a cards array of the same shape, and after loading the page shows how many cards came in (e.g. 'Loaded 24 cards, 3 skipped as duplicates of cards already in the deck') followed by the imported cards listed in the card list; a deck of several hundred cards loads and lists without hanging.
+6. A JSON file that is not in the expected shape, or that contains no valid cards, shows a clear error message naming the expected shape ({front, back} strings), keeps the existing deck untouched, and does not crash the page.
+7. Clicking 'Review due cards' starts a session showing the front of the first due card; clicking the card (or pressing Space) flips it to reveal the back, and pressing it again flips it back.
+8. The revealed card shows three buttons — Again, Good, Easy — each labelled with the interval it will schedule (e.g. 'Good · 2d'), and each is also reachable from the keyboard with keys 1, 2 and 3; pressing one advances to the next due card without a full page reload.
+9. The scheduler applies its own rules: Again resets the card to due immediately (it reappears later in the same session), a new card graded Good is scheduled for tomorrow, Good thereafter multiplies the interval by 2, Easy multiplies it by 2.5 and adds a day, and the card's next due date shown in the card list reflects the choice made in review.
+10. Finishing a session shows a summary readout with counts of Again, Good and Easy answers given in that session and how many cards are still due today, plus a button to return to the home view.
+11. A stats section shows a bar chart (through the themed chart component) of how many cards come due on each of the next 7 days, plus readouts of total cards, due today and cards with an interval of 21 days or more.
+12. Every interactive control — buttons, form fields, review buttons — is at least 32px tall and wide at phone width, and the whole review flow, deck list and load-deck flow lay out in a single column usable on a phone-sized screen.
+13. The page title and description in app/identity.ts read as the flashcard app's own name and purpose, not the placeholder text.
+
+These are the outcomes this task is judged against.

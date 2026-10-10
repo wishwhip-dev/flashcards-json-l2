@@ -5,8 +5,9 @@
  * change here reaches every one of them. Keep `name` short and `description` one plain sentence.
  */
 export const identity = {
-  name: "Flashcards with JSON load",
-  description: "Spaced repetition flashcards.",
+  name: "Recall Deck",
+  description:
+    "Spaced-repetition flashcards: type your own cards or load a deck from a JSON file, then review what is due today with again, good and easy scheduling.",
   accent: "#1d4ed8",
-  initial: "F",
+  initial: "R",
 } as const;
