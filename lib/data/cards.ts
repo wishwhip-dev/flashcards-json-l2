@@ -2,7 +2,7 @@
  * The app's data-access functions. Components call these, never Dexie directly.
  */
 import { database, newId, type Card } from "@/lib/db";
-import { nextDueAt, type Grade } from "@/lib/srs";
+import { nextDueAt, nextInterval, type Grade } from "@/lib/srs";
 
 const table = async () => (await database.ready()).cards;
 
