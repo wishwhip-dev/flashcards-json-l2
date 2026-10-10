@@ -18,11 +18,11 @@ function isNonEmptyString(value: unknown): value is string {
 }
 
 function collect(value: unknown): { cards: RawCard[]; invalid: number } {
-  const entries: unknown[] = Array.isArray(value)
+  const entries = Array.isArray(value)
     ? value
     : value !== null && typeof value === "object" && Array.isArray((value as { cards?: unknown }).cards)
-      ? ((value as { cards: unknown[] }).cards)
-      : null;
+      ? (value as { cards: unknown[] }).cards
+      : undefined;
 
   if (!entries) throw new Error(SHAPE_HINT);
 
