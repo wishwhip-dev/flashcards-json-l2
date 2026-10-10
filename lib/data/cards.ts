@@ -70,6 +70,11 @@ export async function deleteCard(id: string): Promise<void> {
   await (await table()).delete(id);
 }
 
+/** The cards due sometime today — the "still due today" readout of a session summary. */
+export async function dueTodayCards(now: number): Promise<Card[]> {
+  return (await table()).where("dueAt").below(startOfTomorrow(now)).toArray();
+}
+
 /** Apply a review grade: recompute the interval and due date and write them back. */
 export async function gradeCard(card: Card, grade: Grade, now = Date.now()): Promise<Card> {
   const updated: Card = {
