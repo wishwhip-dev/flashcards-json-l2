@@ -115,7 +115,7 @@ export function ReviewSession({ dueCards: queue, onExit }: { dueCards: Card[]; o
         {flipped ? (
           <div className="grid grid-cols-3 gap-2">
             {GRADES.map(({ grade: g, key }) => (
-              <Button key={g} variant={g === "again" ? "outline" : "default"} disabled={busy} onClick={() => void grade(g)}>
+              <Button key={g} variant={g === "again" ? "outline" : "default"} onClick={() => void grade(g)}>
                 <span>{gradeLabel(g, current.interval)}</span>
                 <kbd className="ms-1 rounded border bg-background/60 px-1 font-sans text-[10px]">{key}</kbd>
               </Button>
