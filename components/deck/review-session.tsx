@@ -75,7 +75,7 @@ export function ReviewSession({ dueCards: queue, onExit }: { dueCards: Card[]; o
     const listener = (event: KeyboardEvent) => onKey(event);
     window.addEventListener("keydown", listener);
     return () => window.removeEventListener("keydown", listener);
-  }, [onKey]);
+  }, []);
 
   if (done) {
     return <SessionSummary counts={counts} onExit={onExit} />;
