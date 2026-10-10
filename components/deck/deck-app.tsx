@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +16,18 @@ import { CardList } from "@/components/deck/card-list";
 import { DeckStats } from "@/components/deck/deck-stats";
 import { LoadDeckDialog } from "@/components/deck/load-deck-dialog";
 import { ReviewSession } from "@/components/deck/review-session";
+
+/**
+ * The current time, as a value only the browser knows: a useSyncExternalStore snapshot that also
+ * ticks, so due badges and the chart age honestly while the page sits open.
+ */
+function useNow(tickMs = 60_000): number {
+  const subscribe = (notify: () => void) => {
+    const id = window.setInterval(notify, tickMs);
+    return () => window.clearInterval(id);
+  };
+  return useSyncExternalStore(subscribe, () => Date.now(), () => 0);
+}
 
 /**
  * The whole deck on one page: the readouts and the three actions up top, then the review area, the
