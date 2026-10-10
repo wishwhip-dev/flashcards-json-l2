@@ -137,12 +137,7 @@ export function DeckApp() {
 
       {adding && (
         <div id="add-area" className="scroll-mt-4">
-          <AddCardForm
-            onAdded={(front) => {
-              setLoadMessage(null);
-              toast.success(`“${front.length > 40 ? `${front.slice(0, 40)}…` : front}” is in the deck.`);
-            }}
-          />
+          <AddCardForm onAdded={() => setLoadMessage(null)} />
         </div>
       )}
 
