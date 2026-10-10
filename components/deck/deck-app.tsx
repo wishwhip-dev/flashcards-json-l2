@@ -18,23 +18,15 @@ import { LoadDeckDialog } from "@/components/deck/load-deck-dialog";
 import { ReviewSession } from "@/components/deck/review-session";
 
 /**
- * The current time, as a value only the browser knows: a useSyncExternalStore snapshot that also
- * ticks, so due badges and the chart age honestly while the page sits open.
- */
-function useNow(tickMs = 60_000): number {
-  const subscribe = (notify: () => void) => {
-    const id = window.setInterval(notify, tickMs);
-    return () => window.clearInterval(id);
-  };
-  return useSyncExternalStore(subscribe, () => Date.now(), () => 0);
-}
-
-/**
  * The whole deck on one page: the readouts and the three actions up top, then the review area, the
  * add-card form, the card list and the stats. Everything the visitor does stays in this column.
+ *
+ * "Now" comes from the queries, not from a clock hook: each query run captures `Date.now()` in its
+ * Dexie callback, so the value is stable between runs (no re-render loop) and refreshes whenever
+ * the table changes — adding, grading or deleting a card re-reads the deck and re-dates it.
  */
 export function DeckApp() {
-  const deck = useStoredQuery(database, () => listCards());
+  const deck = useStoredQuery(database, async () => ({ cards: await listCards(), now: Date.now() }));
   const nextDue = useStoredQuery(database, () => nextPendingDue(Date.now()));
   const status = useStorageStatus(database);
 
