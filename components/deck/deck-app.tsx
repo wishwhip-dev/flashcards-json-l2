@@ -131,7 +131,7 @@ export function DeckApp() {
                     : "No card has a review scheduled."}
               </p>
             </CardContent>
-          </Card>
+          </UICard>
         ) : null}
       </div>
 
