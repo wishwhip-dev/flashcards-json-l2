@@ -61,7 +61,7 @@ export function DeckApp() {
         </Alert>
       )}
 
-      <Card>
+      <UICard>
         <CardHeader className="gap-1">
           <CardTitle className="text-2xl">Your deck</CardTitle>
           <p className="text-sm text-muted-foreground">
@@ -91,13 +91,13 @@ export function DeckApp() {
             </div>
           )}
         </CardContent>
-      </Card>
+      </UICard>
 
       <div id="review-area" className="scroll-mt-4">
         {session !== null ? (
           <ReviewSession dueCards={session} onExit={() => setSession(null)} />
         ) : deck.isLoading ? null : cards.length === 0 ? (
-          <Card className="border-dashed">
+          <UICard className="border-dashed">
             <CardContent className="space-y-3 py-8 text-center">
               <p className="text-lg font-semibold">Your deck is empty</p>
               <p className="mx-auto max-w-sm text-sm text-muted-foreground">
@@ -118,9 +118,9 @@ export function DeckApp() {
                 </Button>
               </div>
             </CardContent>
-          </Card>
+          </UICard>
         ) : dueCount === 0 ? (
-          <Card className="border-dashed">
+          <UICard className="border-dashed">
             <CardContent className="py-6 text-center">
               <p className="font-semibold">All caught up — nothing is due right now.</p>
               <p className="mt-1 text-sm text-muted-foreground">
