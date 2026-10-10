@@ -2,7 +2,7 @@
 
 import { useEffect, useEffectEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card as UICard, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { database, type Card } from "@/lib/db";
 import { dueTodayCards, gradeCard } from "@/lib/data/cards";
 import { gradeLabel, type Grade } from "@/lib/srs";
