@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffectEvent, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { database, type Card } from "@/lib/db";
 import { dueTodayCards, gradeCard } from "@/lib/data/cards";
 import { gradeLabel, type Grade } from "@/lib/srs";
-import type { Card } from "@/lib/db";
-import { useStoredQuery, type StoredQuery } from "@/lib/storage/react";
-import { database } from "@/lib/db";
+import { useStoredQuery } from "@/lib/storage/react";
 
 const GRADES: { grade: Grade; key: string }[] = [
   { grade: "again", key: "1" },
@@ -72,7 +71,11 @@ export function ReviewSession({ dueCards: queue, onExit }: { dueCards: Card[]; o
   });
 
   // The listener is registered once; useEffectEvent keeps the handler it calls current.
-  useEffectEvent_keydown(onKey);
+  useEffect(() => {
+    const listener = (event: KeyboardEvent) => onKey(event);
+    window.addEventListener("keydown", listener);
+    return () => window.removeEventListener("keydown", listener);
+  }, [onKey]);
 
   if (done) {
     return <SessionSummary counts={counts} onExit={onExit} />;
@@ -109,7 +112,7 @@ export function ReviewSession({ dueCards: queue, onExit }: { dueCards: Card[]; o
             {GRADES.map(({ grade: g, key }) => (
               <Button key={g} variant={g === "again" ? "outline" : "default"} disabled={busy} onClick={() => void grade(g)}>
                 <span>{gradeLabel(g, current.interval)}</span>
-                <kbd className="ms-1 rounded border bg-background/60 px-1 text-[10px] font-sans">{key}</kbd>
+                <kbd className="ms-1 rounded border bg-background/60 px-1 font-sans text-[10px]">{key}</kbd>
               </Button>
             ))}
           </div>
@@ -123,8 +126,9 @@ export function ReviewSession({ dueCards: queue, onExit }: { dueCards: Card[]; o
 
 function SessionSummary({ counts, onExit }: { counts: Record<Grade, number>; onExit: () => void }) {
   // Re-read after the session's last write: Again-ed cards are due again right now.
-  const stillDue = useStoredQuery(database, () => dueTodayCards(Date.now())) as StoredQuery<Card[]>;
+  const stillDue = useStoredQuery(database, () => dueTodayCards(Date.now()));
   const total = counts.again + counts.good + counts.easy;
+  const dueCount = stillDue.data?.length ?? 0;
   return (
     <Card>
       <CardHeader>
@@ -140,28 +144,13 @@ function SessionSummary({ counts, onExit }: { counts: Record<Grade, number>; onE
           ))}
         </div>
         <p className="text-sm text-muted-foreground">
-          You answered {total} {total === 1 ? "card" : "cards"}.
+          You answered {total} {total === 1 ? "card" : "cards"}.{" "}
           {stillDue.isLoading
-            ? " Counting what is still due today…"
-            : ` ${stillDue.data?.length ?? 0} ${stillDue.data?.length === 1 ? "card is" : "cards are"} still due today.`}
+            ? "Counting what is still due today…"
+            : `${dueCount} ${dueCount === 1 ? "card is" : "cards are"} still due today.`}
         </p>
         <Button onClick={onExit}>Back to deck</Button>
       </CardContent>
     </Card>
   );
-}
-
-/** Small helper so the keydown wiring reads as one line above. */
-function useEffectEvent_keydown(handler: (event: KeyboardEvent) => void) {
-  KeydownEffect({ handler });
-}
-
-import { useEffect } from "react";
-
-function KeydownEffect({ handler }: { handler: (event: KeyboardEvent) => void }) {
-  useEffect(() => {
-    const listener = (event: KeyboardEvent) => handler(event);
-    window.addEventListener("keydown", listener);
-    return () => window.removeEventListener("keydown", listener);
-  }, [handler]);
 }
