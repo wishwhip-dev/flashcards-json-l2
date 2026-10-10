@@ -115,18 +115,11 @@ export function DeckApp() {
             <CardContent className="space-y-3 py-8 text-center">
               <p className="text-lg font-semibold">Your deck is empty</p>
               <p className="mx-auto max-w-sm text-sm text-muted-foreground">
-                Add your first card with the form above, or load a whole deck from a JSON file on
-                your computer — a list of <code className="text-xs">{"{front, back}"}</code> objects.
+                Add your first card, or load a whole deck from a JSON file on your computer — a list
+                of <code className="text-xs">{"{front, back}"}</code> objects.
               </p>
               <div className="flex flex-wrap justify-center gap-2">
-                <Button
-                  onClick={() => {
-                    setAdding(true);
-                    document.getElementById("add-area")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                  }}
-                >
-                  Add your first card
-                </Button>
+                <Button onClick={() => setAdding(true)}>Add your first card</Button>
                 <Button variant="outline" onClick={() => setLoadOpen(true)}>
                   Load a JSON deck
                 </Button>
