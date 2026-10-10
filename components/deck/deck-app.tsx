@@ -36,8 +36,8 @@ export function DeckApp() {
   const [session, setSession] = useState<Card[] | null>(null); // null = not reviewing
   const [sessionId, setSessionId] = useState(0); // remounts the session when a new one starts
 
-  const cards = deck.data ?? [];
-  const now = useNow();
+  const cards = deck.data?.cards ?? [];
+  const now = deck.data?.now ?? 0;
   const dueCount = cards.filter((card) => card.dueAt <= now).length;
 
   const startReview = async () => {
