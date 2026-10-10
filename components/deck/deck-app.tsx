@@ -42,6 +42,7 @@ export function DeckApp() {
   const [loadOpen, setLoadOpen] = useState(false);
   const [loadMessage, setLoadMessage] = useState<string | null>(null);
   const [session, setSession] = useState<Card[] | null>(null); // null = not reviewing
+  const [sessionId, setSessionId] = useState(0); // remounts the session when a new one starts
 
   const cards = deck.data ?? [];
   const now = useNow();
@@ -55,6 +56,7 @@ export function DeckApp() {
         return;
       }
       setSession(due);
+      setSessionId((n) => n + 1);
       document.getElementById("review-area")?.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not start the review session.");
@@ -107,7 +109,7 @@ export function DeckApp() {
 
       <div id="review-area" className="scroll-mt-4">
         {session !== null ? (
-          <ReviewSession dueCards={session} onExit={() => setSession(null)} />
+          <ReviewSession key={sessionId} dueCards={session} onExit={() => setSession(null)} />
         ) : deck.isLoading ? null : cards.length === 0 ? (
           <UICard className="border-dashed">
             <CardContent className="space-y-3 py-8 text-center">
