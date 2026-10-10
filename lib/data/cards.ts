@@ -74,7 +74,7 @@ export async function deleteCard(id: string): Promise<void> {
 export async function gradeCard(card: Card, grade: Grade, now = Date.now()): Promise<Card> {
   const updated: Card = {
     ...card,
-    interval: grade === "again" ? 0 : grade === "good" ? (card.interval === 0 ? 1 : card.interval * 2) : Math.round(card.interval * 2.5) + 1,
+    interval: nextInterval(card.interval, grade),
     dueAt: nextDueAt(card.interval, grade, now),
   };
   await (await table()).put(updated);
